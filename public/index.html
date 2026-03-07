@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Draw | 震撼抽奖</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Specific Styles for Draw Interface */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .header-controls {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+
+        .main-title {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            }
+
+            50% {
+                text-shadow: 0 0 40px rgba(236, 72, 153, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+
+            100% {
+                text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            }
+        }
+
+        .draw-container {
+            width: 90vw;
+            max-width: 1400px;
+            display: flex;
+            gap: 2rem;
+            align-items: stretch;
+            height: 60vh;
+        }
+
+        /* Control Panel */
+        .controls-panel {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .prize-selector {
+            font-size: 1.2rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid var(--primary);
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .count-selector {
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .btn-massive {
+            font-size: 1.8rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.1s;
+        }
+
+        .btn-massive:active {
+            transform: scale(0.95);
+        }
+
+        /* Slot Machine Area */
+        .slot-machine {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--glass-border);
+            border-radius: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            gap: 1.5rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .slot-item {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            width: 280px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* The rolling animation track */
+        .name-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .name-track span {
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 1rem;
+        }
+
+        .rolling .name-track {
+            animation: rollFast 0.15s linear infinite;
+        }
+
+        @keyframes rollFast {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-360px);
+            }
+
+            /* Assuming 3 dummy names per track for illusion */
+        }
+
+        /* Winner highlight state */
+        .slot-item.winner {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: #fff;
+            box-shadow: 0 0 40px var(--primary);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .winner-modal {
+            text-align: center;
+            animation: dropDown 0.6s cubic-bezier(0.2, 1, 0.3, 1);
+            max-width: 800px;
+            width: 90%;
+            padding: 3rem;
+        }
+
+        @keyframes dropDown {
+            from {
+                transform: translateY(-100px) scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-prize-name {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        .modal-names {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .fireworks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header-controls">
+        <a href="admin.html" target="_blank" class="btn btn-outline" style="background: rgba(0,0,0,0.5);">⚙️ 去后台配置</a>
+    </div>
+
+    <h1 class="main-title" id="mainTitle">LUCKY DRAW</h1>
+
+    <div class="draw-container">
+        <!-- Control Panel -->
+        <div class="controls-panel glass-panel">
+            <h2 style="font-size: 1.5rem; text-align: center; margin-bottom: 1rem;">当前奖项</h2>
+            <select id="selPrize" class="prize-selector">
+                <!-- Injected via JS -->
+            </select>
+
+            <div style="font-size: 0.9rem; color: var(--text-muted); text-align: center; margin-top: -10px;">
+                剩余名额: <span id="lblPrizeRemain" style="color: #fff; font-weight: bold;">0</span>
+            </div>
+
+            <h2 style="font-size: 1.5rem; text-align: center; margin-top: 1rem; margin-bottom: 1rem;">抽取人数</h2>
+            <div class="flex items-center justify-between">
+                <button class="btn btn-outline" id="btnCountMinus" style="font-size: 1.5rem;">-</button>
+                <input type="number" id="txtDrawCount" class="count-selector" value="1" min="1" max="100" readonly
+                    style="width: 100px;">
+                <button class="btn btn-outline" id="btnCountPlus" style="font-size: 1.5rem;">+</button>
+            </div>
+
+            <div style="font-size: 0.9rem; color: var(--text-muted); text-align: center;">
+                候选人数: <span id="lblCandidates" style="color: var(--accent); font-weight: bold;">0</span>
+            </div>
+
+            <div style="flex: 1;"></div>
+
+            <button class="btn btn-primary btn-massive w-full" id="btnAction" style="width: 100%">开始抽奖</button>
+        </div>
+
+        <!-- Slot Machine -->
+        <div class="slot-machine" id="slotMachine">
+            <!-- Slots injected via JS based on count -->
+            <div class="slot-item">
+                <div class="name-track"><span>准备就绪</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Winner Modal -->
+    <div class="modal-overlay" id="winnerModalOverlay">
+        <canvas class="fireworks" id="fireworksCanvas"></canvas>
+        <div class="winner-modal glass-panel">
+            <div class="modal-prize-name" id="modalPrizeName">一等奖</div>
+            <div class="modal-names" id="modalWinnerNames">
+                <!-- Names go here -->
+            </div>
+            <button class="btn btn-primary btn-massive" id="btnCloseModal">继续抽奖</button>
+        </div>
+    </div>
+
+    <!-- Confetti Library for effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/draw.js"></script>
+</body>
+
+</html>
