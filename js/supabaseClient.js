@@ -9,6 +9,23 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const SupabaseAPI = {
+    async login(email, password) {
+        return await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+    },
+
+    async logout() {
+        return await supabase.auth.signOut();
+    },
+
+    onAuthStateChange(callback) {
+        supabase.auth.onAuthStateChange((event, session) => {
+            callback(event, session);
+        });
+    },
+
     async recordWinners(theme, prizeName, winners) {
         if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
             console.warn('⚠️ Supabase 尚未配置，暂时只在本地保存中奖资料。');
