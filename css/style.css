@@ -52,6 +52,7 @@ h3 {
     margin-bottom: 1rem;
     background: linear-gradient(135deg, #fff, #94a3b8);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -259,4 +260,51 @@ tr:hover td {
     background: rgba(16, 185, 129, 0.1);
     color: #10b981;
     border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* Drawer styles */
+.drawer-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1999;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+.drawer-overlay.open {
+    visibility: visible;
+    opacity: 1;
+}
+
+.settings-drawer {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 600px;
+    max-width: 100vw;
+    height: 100vh;
+    background: var(--bg-dark);
+    z-index: 2000;
+    transition: right 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    overflow-y: auto;
+    padding: 2rem;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+    border-left: 1px solid var(--glass-border);
+}
+.settings-drawer.open {
+    right: 0;
+}
+.settings-drawer .grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+.settings-drawer .container {
+    padding: 0;
+    max-width: 100%;
+    margin-top: 0 !important;
+    border: none;
+    box-shadow: none;
+    background: transparent;
 }
