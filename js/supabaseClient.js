@@ -2,8 +2,8 @@
 // ！！注意：如果直接上传到公开的 GitHub 仓库，你的 key 会被他人看到！！
 // 如果需要在本机使用，可以在这里填写，并确保这个文件不要推送到公开仓库中（可以将其加入 .gitignore）。
 
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = 'https://sfauzixrcrscsxpyglaj.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmYXV6aXhyY3JzY3N4cHlnbGFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MzA0MjQsImV4cCI6MjA4ODUwNjQyNH0.DMpfhk_wGBVX-CH2FUxl1u6bO-gy2uXKMmZx8eYlNo0';
 
 // 初始化 Supabase
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
