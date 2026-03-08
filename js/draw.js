@@ -217,6 +217,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Extract winner IDs
         const winnerIds = winners.map(w => w.id);
         const savedWinners = AppData.recordDraw(selPrize.value, winnerIds);
+        const prizeName = currentData.prizes.find(pz => pz.id === selPrize.value).name;
+
+        // Sync winner data to Supabase (Background)
+        if (window.SupabaseAPI) {
+            window.SupabaseAPI.recordWinners(currentData.theme || "LUCKY DRAW", prizeName, savedWinners);
+        }
 
         // Visual Effect for slots stopping (staggered)
         slotsConfig.forEach((slot, index) => {
